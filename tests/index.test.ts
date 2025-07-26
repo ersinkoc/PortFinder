@@ -160,5 +160,33 @@ describe('Main API Functions', () => {
         expect((error as PortFinderError).details).toHaveProperty('requested', 5);
       }
     });
+
+    it('should handle edge case with exactly the required number of ports found', async () => {
+      // Test when we find exactly the number of ports requested
+      const ports = await findPorts(1, { start: 38000, end: 38100 });
+      expect(ports).toHaveLength(1);
+      expect(ports[0]).toBeGreaterThanOrEqual(38000);
+      expect(ports[0]).toBeLessThanOrEqual(38100);
+    });
+
+    it('should handle empty exclude array', async () => {
+      const port = await findPort({ 
+        start: 39000, 
+        end: 39100, 
+        exclude: [] 
+      });
+      expect(port).toBeGreaterThanOrEqual(39000);
+      expect(port).toBeLessThanOrEqual(39100);
+    });
+
+    it('should handle empty validators array', async () => {
+      const port = await findPort({ 
+        start: 40000, 
+        end: 40100, 
+        validators: [] 
+      });
+      expect(port).toBeGreaterThanOrEqual(40000);
+      expect(port).toBeLessThanOrEqual(40100);
+    });
   });
 });

@@ -106,5 +106,30 @@ describe('Validators', () => {
       const result = applyValidators(1234, []);
       expect(result).toBe(true);
     });
+
+    it('should handle mixed valid and invalid validators gracefully', () => {
+      // This tests the early return behavior when a validator fails
+      addValidator('always-false', () => false);
+      addValidator('always-true', () => true);
+      
+      const result = applyValidators(1234, ['always-false', 'always-true']);
+      expect(result).toBe(false); // Should fail on first validator
+      
+      removeValidator('always-false');
+      removeValidator('always-true');
+    });
+
+    it('should handle overwriting existing validators', () => {
+      const validator1 = () => true;
+      const validator2 = () => false;
+      
+      addValidator('test-overwrite', validator1);
+      expect(getValidator('test-overwrite')).toBe(validator1);
+      
+      addValidator('test-overwrite', validator2);
+      expect(getValidator('test-overwrite')).toBe(validator2);
+      
+      removeValidator('test-overwrite');
+    });
   });
 });

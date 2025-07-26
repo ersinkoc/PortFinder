@@ -28,4 +28,28 @@ describe('PortFinderError', () => {
     expect(error.stack).toBeDefined();
     expect(error.stack).toContain('PortFinderError');
   });
+
+  it('should handle complex details object', () => {
+    const complexDetails = {
+      port: 3000,
+      host: '127.0.0.1',
+      attempted: [3000, 3001, 3002],
+      nested: {
+        reason: 'all_occupied',
+        timestamp: Date.now()
+      }
+    };
+    const error = new PortFinderError('Complex error', 'COMPLEX_ERROR', complexDetails);
+    expect(error.details).toEqual(complexDetails);
+    expect(error.details).toHaveProperty('nested');
+    expect((error.details as any).nested).toHaveProperty('reason', 'all_occupied');
+  });
+
+  it('should handle null and undefined details', () => {
+    const errorWithNull = new PortFinderError('Null details', 'NULL_DETAILS', null);
+    expect(errorWithNull.details).toBeNull();
+    
+    const errorWithUndefined = new PortFinderError('Undefined details', 'UNDEFINED_DETAILS', undefined);
+    expect(errorWithUndefined.details).toBeUndefined();
+  });
 });

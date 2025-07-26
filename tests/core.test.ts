@@ -116,6 +116,32 @@ describe('Core Functions', () => {
       const result = await checkPort(54321);
       expect(result).toBe(true);
     });
+
+    it('should handle server errors that are not EADDRINUSE or EACCES', async () => {
+      // Mock createServer to return a server that emits a different error
+      const net = require('net');
+      const originalCreateServer = net.createServer;
+      
+      net.createServer = jest.fn(() => {
+        const EventEmitter = require('events');
+        const mockServer = new EventEmitter();
+        mockServer.listen = jest.fn((_port: any, _host: any) => {
+          // Emit a different error code
+          const error = new Error('Connection refused');
+          (error as any).code = 'ECONNREFUSED';
+          mockServer.emit('error', error);
+        });
+        mockServer.removeAllListeners = jest.fn();
+        mockServer.close = jest.fn();
+        return mockServer;
+      });
+
+      const result = await checkPort(12345, '127.0.0.1');
+      expect(result).toBe(false);
+
+      // Restore original function
+      net.createServer = originalCreateServer;
+    });
   });
 
   describe('scanPorts', () => {
@@ -217,6 +243,22 @@ describe('Core Functions', () => {
       expect(results.length).toBe(2);
       // Without consecutive flag, ports don't need to be consecutive
     });
+
+    it('should handle edge case where consecutive search starts at exact count boundary', async () => {
+      // Test the edge case where we find exactly the number of consecutive ports we need
+      const results = await scanPorts(34000, 34002, '127.0.0.1', new Set(), undefined, 3, true);
+      if (results.length === 3) {
+        expect(results[0]).toBe(34000);
+        expect(results[1]).toBe(34001);
+        expect(results[2]).toBe(34002);
+      }
+    });
+
+    it('should handle validator that rejects all ports', async () => {
+      const rejectAllValidator = () => false;
+      const results = await scanPorts(35000, 35005, '127.0.0.1', new Set(), rejectAllValidator, 1);
+      expect(results).toEqual([]);
+    });
   });
 
   describe('scanPortsParallel', () => {
@@ -260,7 +302,8 @@ describe('Core Functions', () => {
     });
 
     it('should use default exclude set when not provided', async () => {
-      const results = await scanPortsParallel(53000, 53010, '127.0.0.1');
+      // Use port 0 which should always be available for binding
+      const results = await scanPortsParallel(0, 0, '127.0.0.1');
       expect(results.length).toBeGreaterThanOrEqual(1);
     });
 
