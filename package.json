@@ -51,12 +51,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ersinkoc/port-finder.git"
+    "url": "https://github.com/ersinkoc/PortFinder.git"
   },
   "bugs": {
-    "url": "https://github.com/ersinkoc/port-finder/issues"
+    "url": "https://github.com/ersinkoc/PortFinder/issues"
   },
-  "homepage": "https://github.com/ersinkoc/port-finder#readme",
+  "homepage": "https://github.com/ersinkoc/PortFinder#readme",
   "devDependencies": {
     "@types/jest": "^29.5.0",
     "@types/node": "^20.0.0",
