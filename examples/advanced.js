@@ -1,4 +1,4 @@
-const { findPort, findPorts, addValidator, removeValidator } = require('../dist/cjs');
+const { findPort, findPorts, isPortAvailable, addValidator, removeValidator } = require('../dist/cjs');
 const { createServer } = require('net');
 
 async function advancedExamples() {
