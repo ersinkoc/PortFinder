@@ -65,10 +65,11 @@ describe('CLI Unit Tests', () => {
       expect(parseArgs([])).toEqual({});
     });
 
-    it('should handle NaN values for numeric options', () => {
-      const result = parseArgs(['-s', 'not-a-number', '-c', 'abc']);
-      expect(result.start).toBeNaN();
-      expect(result.count).toBeNaN();
+    it('should throw error for invalid numeric options', () => {
+      expect(() => parseArgs(['-s', 'not-a-number'])).toThrow('Invalid start port');
+      expect(() => parseArgs(['-c', 'abc'])).toThrow('Invalid count');
+      expect(() => parseArgs(['-e', 'xyz'])).toThrow('Invalid end port');
+      expect(() => parseArgs(['--check', 'invalid'])).toThrow('Invalid check port');
     });
   });
 

@@ -53,13 +53,9 @@ export async function checkPort(port: number, host: string = DEFAULT_HOST): Prom
       server.close();
     };
 
-    server.once('error', (err: NodeJS.ErrnoException) => {
+    server.once('error', () => {
       cleanup();
-      if (err.code === 'EADDRINUSE' || err.code === 'EACCES') {
-        resolve(false);
-      } else {
-        resolve(false);
-      }
+      resolve(false);
     });
 
     server.once('listening', () => {

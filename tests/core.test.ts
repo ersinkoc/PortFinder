@@ -87,7 +87,8 @@ describe('Core Functions', () => {
     });
 
     it('should handle server listen errors gracefully', async () => {
-      const result = await checkPort(80, '255.255.255.255');
+      // Try to bind to an invalid IP address that will reliably fail
+      const result = await checkPort(12345, '256.256.256.256');
       expect(result).toBe(false);
     });
 

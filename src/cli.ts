@@ -29,15 +29,25 @@ export function parseArgs(args: string[]): CLIOptions {
         options.help = true;
         break;
       case '-s':
-      case '--start':
-        options.start = parseInt(next as string, 10);
+      case '--start': {
+        const startVal = parseInt(next as string, 10);
+        if (isNaN(startVal)) {
+          throw new Error(`Invalid start port: "${next}". Must be a number.`);
+        }
+        options.start = startVal;
         i++;
         break;
+      }
       case '-e':
-      case '--end':
-        options.end = parseInt(next as string, 10);
+      case '--end': {
+        const endVal = parseInt(next as string, 10);
+        if (isNaN(endVal)) {
+          throw new Error(`Invalid end port: "${next}". Must be a number.`);
+        }
+        options.end = endVal;
         i++;
         break;
+      }
       case '-x':
       case '--exclude':
         options.exclude = (next as string).split(',').map(p => parseInt(p, 10));
@@ -49,10 +59,15 @@ export function parseArgs(args: string[]): CLIOptions {
         i++;
         break;
       case '-c':
-      case '--count':
-        options.count = parseInt(next as string, 10);
+      case '--count': {
+        const countVal = parseInt(next as string, 10);
+        if (isNaN(countVal)) {
+          throw new Error(`Invalid count: "${next}". Must be a number.`);
+        }
+        options.count = countVal;
         i++;
         break;
+      }
       case '--consecutive':
         options.consecutive = true;
         break;
@@ -61,10 +76,15 @@ export function parseArgs(args: string[]): CLIOptions {
         options.validators = (next as string).split(',');
         i++;
         break;
-      case '--check':
-        options.check = parseInt(next as string, 10);
+      case '--check': {
+        const checkVal = parseInt(next as string, 10);
+        if (isNaN(checkVal)) {
+          throw new Error(`Invalid check port: "${next}". Must be a number.`);
+        }
+        options.check = checkVal;
         i++;
         break;
+      }
       case '-j':
       case '--json':
         options.json = true;
